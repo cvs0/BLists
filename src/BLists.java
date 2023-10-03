@@ -1,10 +1,10 @@
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class BLists {
     public static <T> T getLast(List<T> list) {
@@ -178,5 +178,107 @@ public class BLists {
             }
         }
         return -1;
+    }
+
+    public static <T> List<T> concatenateLists(List<T>... lists) {
+        List<T> result = new ArrayList<>();
+        for (List<T> list : lists) {
+            result.addAll(list);
+        }
+        return result;
+    }
+
+    public static <T, U> List<Pair<T, U>> mergeLists(List<T> list1, List<U> list2) {
+        int size = Math.min(list1.size(), list2.size());
+        List<Pair<T, U>> mergedList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            mergedList.add(new Pair<>(list1.get(i), list2.get(i)));
+        }
+        return mergedList;
+    }
+
+    public static <T> List<T> swapElements(List<T> list, int index1, int index2) {
+        Collections.swap(list, index1, index2);
+        return list;
+    }
+
+    public static <T> List<T> rotateLeft(List<T> list, int distance) {
+        Collections.rotate(list, -distance);
+        return list;
+    }
+
+    public static <T> List<T> rotateRight(List<T> list, int distance) {
+        Collections.rotate(list, distance);
+        return list;
+    }
+
+    public static int sumOfSquaresOfEvens(List<Integer> numbers) {
+        return numbers.stream()
+                .filter(n -> n % 2 == 0)
+                .mapToInt(n -> n * n)
+                .sum();
+    }
+
+    public static double averageLengthOfStringsStartingWithPrefix(List<String> strings, String prefix) {
+        return strings.stream()
+                .filter(s -> s.startsWith(prefix))
+                .mapToInt(String::length)
+                .average()
+                .orElse(0.0);
+    }
+
+    public static List<List<String>> groupStringsByLength(List<String> strings) {
+        return new ArrayList<>(strings.stream()
+                .collect(Collectors.groupingBy(String::length))
+                .values());
+    }
+
+    public static long productOfSquaredOdds(List<Integer> numbers) {
+        return numbers.stream()
+                .filter(n -> n % 2 != 0)
+                .mapToLong(n -> (long) n * n)
+                .reduce(1, (a, b) -> a * b);
+    }
+
+    public static <T> T mostCommonElement(List<T> list) {
+        Map<T, Long> frequencyMap = list.stream()
+                .collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+
+        return frequencyMap.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+    }
+
+    public static <T> Map<Boolean, List<T>> partitionList(List<T> list, Predicate<T> predicate) {
+        return list.stream()
+                .collect(Collectors.partitioningBy(predicate));
+    }
+
+    public static <T, R> List<R> customOperationOnAdjacentPairs(List<T> list, BiFunction<T, T, R> operation) {
+        return IntStream.range(0, list.size() - 1)
+                .mapToObj(i -> operation.apply(list.get(i), list.get(i + 1)))
+                .collect(Collectors.toList());
+    }
+
+    public static <T> List<List<T>> transposeMatrix(List<List<T>> matrix) {
+        return new ArrayList<>(matrix.stream()
+                .flatMap(i -> IntStream.range(0, i.size())
+                        .mapToObj(j -> new Pair<>(j, i.get(j))))
+                .collect(Collectors.groupingBy(Pair::first,
+                        LinkedHashMap::new,
+                        Collectors.mapping(Pair::second, Collectors.toList())))
+                .values());
+    }
+
+    public static String wordWithHighestAsciiSum(List<String> words) {
+        return words.stream()
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        word -> word.chars().sum()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 }

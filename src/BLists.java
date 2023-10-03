@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class BLists {
@@ -156,5 +157,26 @@ public class BLists {
             }
         }
         return Collections.emptyList();
+    }
+
+    public static <T> boolean allMatch(List<T> list, Predicate<? super T> predicate) {
+        return list.stream().allMatch(predicate);
+    }
+
+    public static <T> boolean anyMatch(List<T> list, Predicate<? super T> predicate) {
+        return list.stream().anyMatch(predicate);
+    }
+
+    public static <T> long countOccurrences(List<T> list, T element) {
+        return list.stream().filter(e -> e.equals(element)).count();
+    }
+
+    public static <T> int lastIndexOf(List<T> list, T element) {
+        for (int i = list.size() - 1; i >= 0; i--) {
+            if (list.get(i).equals(element)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

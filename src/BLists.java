@@ -1,3 +1,8 @@
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
+
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -7,14 +12,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class BLists {
-    public static <T> T getLast(List<T> list) {
+    public static <T> @Nullable T getLast(@NotNull List<T> list) {
         if (list.isEmpty()) {
             return null;
         }
         return list.get(list.size() - 1);
     }
 
-    public static <T> List<T> removeDuplicates(List<T> list) {
+    public static <T> List<T> removeDuplicates(@NotNull List<T> list) {
         return list.stream().distinct().collect(Collectors.toList());
     }
 
@@ -22,7 +27,7 @@ public class BLists {
         Collections.shuffle(list);
     }
 
-    public static void processElements(List<Object> list) {
+    public static void processElements(@NotNull List<Object> list) {
         for (var element : list) {
             if (element instanceof String str) {
                 System.out.println("String: " + str);
@@ -39,11 +44,11 @@ public class BLists {
         return list;
     }
 
-    public static <T> List<T> intersection(List<T> list1, List<T> list2) {
+    public static <T> List<T> intersection(@NotNull List<T> list1, @NotNull List<T> list2) {
         return list1.stream().filter(list2::contains).collect(Collectors.toList());
     }
 
-    public static <T extends Comparable<? super T>> boolean isSorted(List<T> list) {
+    public static <T extends Comparable<? super T>> boolean isSorted(@NotNull List<T> list) {
         for (int i = 0; i < list.size() - 1; i++) {
             if (list.get(i).compareTo(list.get(i + 1)) > 0) {
                 return false;
@@ -52,21 +57,22 @@ public class BLists {
         return true;
     }
 
-    public static <T> int indexOf(List<T> list, T element) {
+    public static <T> int indexOf(@org.jetbrains.annotations.NotNull List<T> list, T element) {
         return list.indexOf(element);
     }
 
-    public static <T> List<T> subList(List<T> list, int fromIndex, int toIndex) {
+    public static <T> @NotNull List<T> subList(@NotNull List<T> list, int fromIndex, int toIndex) {
         return list.subList(fromIndex, toIndex);
     }
 
-    public static <T> List<T> concatenate(List<T> list1, List<T> list2) {
+    public static <T> @NotNull List<T> concatenate(List<T> list1, List<T> list2) {
         List<T> concatenatedList = new java.util.ArrayList<>(List.copyOf(list1));
         concatenatedList.addAll(list2);
         return concatenatedList;
     }
 
-    public static <T> List<T> rotate(List<T> list, int distance) {
+    @Contract("_, _ -> param1")
+    public static <T> @NotNull List<T> rotate(@NotNull List<T> list, int distance) {
         int size = list.size();
         if (size == 0) {
             return list;
@@ -79,7 +85,7 @@ public class BLists {
         return list;
     }
 
-    public static <T> T mode(List<T> list) {
+    public static <T> T mode(@NotNull List<T> list) {
         return list.stream()
                 .collect(Collectors.groupingBy(e -> e, Collectors.counting()))
                 .entrySet().stream()
@@ -88,7 +94,7 @@ public class BLists {
                 .orElse(null);
     }
 
-    public static <T> List<List<T>> partition(List<T> list, int size) {
+    public static <T> List<List<T>> partition(@NotNull List<T> list, int size) {
         return Collections.nCopies((int) Math.ceil((double) list.size() / size), size)
                 .stream()
                 .map(subListSize -> list.subList(0, Math.min(subListSize, list.size())))
@@ -100,46 +106,47 @@ public class BLists {
         return list;
     }
 
-    public static <T> List<T> removeIf(List<T> list, java.util.function.Predicate<? super T> filter) {
+    @Contract("_, _ -> param1")
+    public static <T> @NotNull List<T> removeIf(@NotNull List<T> list, java.util.function.Predicate<? super T> filter) {
         list.removeIf(filter);
         return list;
     }
 
-    public static List<Integer> sum(List<Integer> list) {
+    public static @NotNull @Unmodifiable List<Integer> sum(@NotNull List<Integer> list) {
         int result = list.stream().reduce(0, Integer::sum);
         return List.of(result);
     }
 
-    public static <T> List<T> flatten(List<List<T>> listOfLists) {
+    public static <T> List<T> flatten(@NotNull List<List<T>> listOfLists) {
         return listOfLists.stream()
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 
-    public static <T, U> List<Pair<T, U>> zip(List<T> list1, List<U> list2) {
+    public static <T, U> List<Pair<T, U>> zip(@NotNull List<T> list1, @NotNull List<U> list2) {
         int size = Math.min(list1.size(), list2.size());
         return java.util.stream.IntStream.range(0, size)
                 .mapToObj(i -> new Pair<>(list1.get(i), list2.get(i)))
                 .collect(Collectors.toList());
     }
 
-    public static <T extends Comparable<? super T>> Optional<T> max(List<T> list) {
+    public static <T extends Comparable<? super T>> @NotNull Optional<T> max(@NotNull List<T> list) {
         return list.stream().max(Comparable::compareTo);
     }
 
-    public static <T extends Comparable<? super T>> Optional<T> min(List<T> list) {
+    public static <T extends Comparable<? super T>> @NotNull Optional<T> min(@NotNull List<T> list) {
         return list.stream().min(Comparable::compareTo);
     }
 
-    public static <T> Optional<T> reduce(List<T> list, BinaryOperator<T> operator) {
+    public static <T> @NotNull Optional<T> reduce(@NotNull List<T> list, BinaryOperator<T> operator) {
         return list.stream().reduce(operator);
     }
 
-    public static <T, R> List<R> map(List<T> list, Function<? super T, ? extends R> mapper) {
+    public static <T, R> List<R> map(@NotNull List<T> list, Function<? super T, ? extends R> mapper) {
         return list.stream().map(mapper).collect(Collectors.toList());
     }
 
-    public static <T> List<T> takeWhile(List<T> list, java.util.function.Predicate<? super T> predicate) {
+    public static <T> @NotNull List<T> takeWhile(@NotNull List<T> list, java.util.function.Predicate<? super T> predicate) {
         int lastIndex = list.size();
         for (int i = 0; i < lastIndex; i++) {
             if (!predicate.test(list.get(i))) {
@@ -149,7 +156,7 @@ public class BLists {
         return list;
     }
 
-    public static <T> List<T> dropWhile(List<T> list, java.util.function.Predicate<? super T> predicate) {
+    public static <T> List<T> dropWhile(@NotNull List<T> list, java.util.function.Predicate<? super T> predicate) {
         int lastIndex = list.size();
         for (int i = 0; i < lastIndex; i++) {
             if (!predicate.test(list.get(i))) {
@@ -159,19 +166,19 @@ public class BLists {
         return Collections.emptyList();
     }
 
-    public static <T> boolean allMatch(List<T> list, Predicate<? super T> predicate) {
+    public static <T> boolean allMatch(@NotNull List<T> list, Predicate<? super T> predicate) {
         return list.stream().allMatch(predicate);
     }
 
-    public static <T> boolean anyMatch(List<T> list, Predicate<? super T> predicate) {
+    public static <T> boolean anyMatch(@NotNull List<T> list, Predicate<? super T> predicate) {
         return list.stream().anyMatch(predicate);
     }
 
-    public static <T> long countOccurrences(List<T> list, T element) {
+    public static <T> long countOccurrences(@NotNull List<T> list, T element) {
         return list.stream().filter(e -> e.equals(element)).count();
     }
 
-    public static <T> int lastIndexOf(List<T> list, T element) {
+    public static <T> int lastIndexOf(@NotNull List<T> list, T element) {
         for (int i = list.size() - 1; i >= 0; i--) {
             if (list.get(i).equals(element)) {
                 return i;
@@ -180,7 +187,8 @@ public class BLists {
         return -1;
     }
 
-    public static <T> List<T> concatenateLists(List<T>... lists) {
+    @SafeVarargs
+    public static <T> @NotNull List<T> concatenateLists(List<T> @NotNull ... lists) {
         List<T> result = new ArrayList<>();
         for (List<T> list : lists) {
             result.addAll(list);
@@ -188,7 +196,7 @@ public class BLists {
         return result;
     }
 
-    public static <T, U> List<Pair<T, U>> mergeLists(List<T> list1, List<U> list2) {
+    public static <T, U> @NotNull List<Pair<T, U>> mergeLists(@NotNull List<T> list1, @NotNull List<U> list2) {
         int size = Math.min(list1.size(), list2.size());
         List<Pair<T, U>> mergedList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
@@ -212,14 +220,14 @@ public class BLists {
         return list;
     }
 
-    public static int sumOfSquaresOfEvens(List<Integer> numbers) {
+    public static int sumOfSquaresOfEvens(@NotNull List<Integer> numbers) {
         return numbers.stream()
                 .filter(n -> n % 2 == 0)
                 .mapToInt(n -> n * n)
                 .sum();
     }
 
-    public static double averageLengthOfStringsStartingWithPrefix(List<String> strings, String prefix) {
+    public static double averageLengthOfStringsStartingWithPrefix(@NotNull List<String> strings, String prefix) {
         return strings.stream()
                 .filter(s -> s.startsWith(prefix))
                 .mapToInt(String::length)
@@ -227,20 +235,21 @@ public class BLists {
                 .orElse(0.0);
     }
 
-    public static List<List<String>> groupStringsByLength(List<String> strings) {
+    @Contract("_ -> new")
+    public static @NotNull List<List<String>> groupStringsByLength(@NotNull List<String> strings) {
         return new ArrayList<>(strings.stream()
                 .collect(Collectors.groupingBy(String::length))
                 .values());
     }
 
-    public static long productOfSquaredOdds(List<Integer> numbers) {
+    public static long productOfSquaredOdds(@NotNull List<Integer> numbers) {
         return numbers.stream()
                 .filter(n -> n % 2 != 0)
                 .mapToLong(n -> (long) n * n)
                 .reduce(1, (a, b) -> a * b);
     }
 
-    public static <T> T mostCommonElement(List<T> list) {
+    public static <T> T mostCommonElement(@NotNull List<T> list) {
         Map<T, Long> frequencyMap = list.stream()
                 .collect(Collectors.groupingBy(e -> e, Collectors.counting()));
 
@@ -250,18 +259,19 @@ public class BLists {
                 .orElse(null);
     }
 
-    public static <T> Map<Boolean, List<T>> partitionList(List<T> list, Predicate<T> predicate) {
+    public static <T> Map<Boolean, List<T>> partitionList(@NotNull List<T> list, Predicate<T> predicate) {
         return list.stream()
                 .collect(Collectors.partitioningBy(predicate));
     }
 
-    public static <T, R> List<R> customOperationOnAdjacentPairs(List<T> list, BiFunction<T, T, R> operation) {
+    public static <T, R> List<R> customOperationOnAdjacentPairs(@NotNull List<T> list, BiFunction<T, T, R> operation) {
         return IntStream.range(0, list.size() - 1)
                 .mapToObj(i -> operation.apply(list.get(i), list.get(i + 1)))
                 .collect(Collectors.toList());
     }
 
-    public static <T> List<List<T>> transposeMatrix(List<List<T>> matrix) {
+    @Contract("_ -> new")
+    public static <T> @NotNull List<List<T>> transposeMatrix(@NotNull List<List<T>> matrix) {
         return new ArrayList<>(matrix.stream()
                 .flatMap(i -> IntStream.range(0, i.size())
                         .mapToObj(j -> new Pair<>(j, i.get(j))))
@@ -271,7 +281,7 @@ public class BLists {
                 .values());
     }
 
-    public static String wordWithHighestAsciiSum(List<String> words) {
+    public static String wordWithHighestAsciiSum(@NotNull List<String> words) {
         return words.stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
@@ -283,7 +293,7 @@ public class BLists {
     }
 
     private static boolean hasCycleUtil(String node, Map<String, List<String>> graph,
-                                        Set<String> visited, Set<String> recStack) {
+                                        @NotNull Set<String> visited, Set<String> recStack) {
         if (!visited.contains(node)) {
             visited.add(node);
             recStack.add(node);
@@ -302,7 +312,7 @@ public class BLists {
         return false;
     }
 
-    public static boolean hasCycle(List<Pair<String, String>> edges) {
+    public static boolean hasCycle(@NotNull List<Pair<String, String>> edges) {
         Map<String, List<String>> graph = edges.stream()
                 .collect(Collectors.groupingBy(Pair::first,
                         Collectors.mapping(Pair::second, Collectors.toList())));
@@ -332,7 +342,7 @@ public class BLists {
         return (double) intersection.size() / union.size();
     }
 
-    public static String mostFrequentNGram(List<String> words, int n) {
+    public static String mostFrequentNGram(@NotNull List<String> words, int n) {
         return words.stream()
                 .flatMap(word -> IntStream.range(0, word.length() - n + 1)
                         .mapToObj(i -> word.substring(i, i + n)))
@@ -343,7 +353,7 @@ public class BLists {
                 .orElse(null);
     }
 
-    public static double median(List<Integer> numbers) {
+    public static double median(@NotNull List<Integer> numbers) {
         List<Integer> sortedList = numbers.stream()
                 .sorted()
                 .toList();
@@ -358,7 +368,7 @@ public class BLists {
         }
     }
 
-    public static String longestCommonSubsequence(String s1, String s2) {
+    public static @NotNull String longestCommonSubsequence(@NotNull String s1, @NotNull String s2) {
         int[][] dp = new int[s1.length() + 1][s2.length() + 1];
 
         for (int i = 1; i <= s1.length(); i++) {
@@ -390,7 +400,7 @@ public class BLists {
         return lcs.toString();
     }
 
-    public static int[][] matrixMultiply(int[][] matrix1, int[][] matrix2) {
+    public static int[] @NotNull [] matrixMultiply(int[] @NotNull [] matrix1, int[][] matrix2) {
         int n = matrix1.length;
         int[][] result = new int[n][n];
 
@@ -405,7 +415,7 @@ public class BLists {
         return result;
     }
 
-    private static <T extends Comparable<T>> List<T> merge(List<T> left, List<T> right) {
+    private static <T extends Comparable<T>> @NotNull List<T> merge(@NotNull List<T> left, List<T> right) {
         List<T> result = new ArrayList<>();
         int i = 0, j = 0;
 
@@ -423,7 +433,7 @@ public class BLists {
         return result;
     }
 
-    public static <T extends Comparable<T>> List<T> parallelMergeSort(List<T> list) {
+    public static <T extends Comparable<T>> @NotNull List<T> parallelMergeSort(@NotNull List<T> list) {
         if (list.size() <= 1) {
             return list;
         }
@@ -438,7 +448,7 @@ public class BLists {
         return merge(sortedLeft, sortedRight);
     }
 
-    public static <T> List<T> kMostFrequentElements(List<T> list, int k) {
+    public static <T> List<T> kMostFrequentElements(@NotNull List<T> list, int k) {
         Map<T, Long> frequencyMap = list.stream()
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
@@ -449,7 +459,7 @@ public class BLists {
                 .collect(Collectors.toList());
     }
 
-    public static List<Double> movingAverage(List<Double> numbers, int windowSize) {
+    public static @NotNull List<Double> movingAverage(List<Double> numbers, int windowSize) {
         if (windowSize <= 0 || windowSize > numbers.size()) {
             throw new IllegalArgumentException("Invalid window size");
         }
@@ -471,26 +481,26 @@ public class BLists {
         return averages;
     }
 
-    public static <T, R> List<R> filterAndTransform(List<T> list, Predicate<T> filter, Function<T, R> transformer) {
+    public static <T, R> List<R> filterAndTransform(@NotNull List<T> list, Predicate<T> filter, Function<T, R> transformer) {
         return list.stream()
                 .filter(filter)
                 .map(transformer)
                 .collect(Collectors.toList());
     }
 
-    public static <T, K> Map<K, List<T>> groupBy(List<T> list, Function<T, K> classifier) {
+    public static <T, K> Map<K, List<T>> groupBy(@NotNull List<T> list, Function<T, K> classifier) {
         return list.stream()
                 .collect(Collectors.groupingBy(classifier));
     }
 
-    public static <T> List<T> topKElements(List<T> list, int k, Comparator<T> comparator) {
+    public static <T> List<T> topKElements(@NotNull List<T> list, int k, @NotNull Comparator<T> comparator) {
         return list.stream()
                 .sorted(comparator.reversed())
                 .limit(k)
                 .collect(Collectors.toList());
     }
 
-    public static <T> List<Pair<T, Integer>> runLengthEncoding(List<T> list) {
+    public static <T> @NotNull List<Pair<T, Integer>> runLengthEncoding(@NotNull List<T> list) {
         List<Pair<T, Integer>> encoding = new ArrayList<>();
         if (list.isEmpty()) {
             return encoding;

@@ -489,4 +489,28 @@ public class BLists {
                 .limit(k)
                 .collect(Collectors.toList());
     }
+
+    public static <T> List<Pair<T, Integer>> runLengthEncoding(List<T> list) {
+        List<Pair<T, Integer>> encoding = new ArrayList<>();
+        if (list.isEmpty()) {
+            return encoding;
+        }
+
+        T currentElement = list.get(0);
+        int currentCount = 1;
+
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i).equals(currentElement)) {
+                currentCount++;
+            } else {
+                encoding.add(new Pair<>(currentElement, currentCount));
+                currentElement = list.get(i);
+                currentCount = 1;
+            }
+        }
+
+        encoding.add(new Pair<>(currentElement, currentCount));
+
+        return encoding;
+    }
 }
